@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package>
+  <metadata>
+    <id>Socks.net</id>
+    <version>1.0.3</version>
+    <authors>Lex Childs</authors>
+    <owners>Lex Childs</owners>
+    <licenseUrl>https://github.com/Praeses/socks.net/blob/master/LICENSE</licenseUrl>
+    <description>socks.net is a wrapper around the socks PDF service to make PDF generation simple in .net</description>
+    <summary>Pdf Generation for .Net</summary>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <language>en-US</language>
+    <projectUrl>https://github.com/Praeses/socks.net/</projectUrl>
+    <dependencies>
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="SocksExtensions.cs" target="content/Extenstions/SocksExtensions.cs" />
+  </files>
+</package>

@@ -42,15 +42,15 @@ namespace System
             if (settings == null) settings = new PdfSettings();
             if (settings.Landscape) data.Add("orientation", "Landscape");
 
-            string headerHtml = "";
-            //will return "" if there is no header view
-            headerHtml = controller.RenderViewToString(view + ".header", model);
+            string headerHtml = controller.RenderViewToString(view + ".header", model);
+            string footerHtml = controller.RenderViewToString(view + ".footer", model);
 
             var html = controller.RenderViewToString(view, model);
             html = System.Web.HttpUtility.UrlEncode(html);
             headerHtml = System.Web.HttpUtility.UrlEncode(headerHtml);
             data.Add("data-html", html);
             if (headerHtml != "") { data.Add("data-header-html", headerHtml); }
+            if (footerHtml != "") { data.Add("data-footer-html", footerHtml); }
             data.Add("dpi", settings.dpi.ToString() );
             data.Add("margin-left", settings.MarginLeft);
             data.Add("margin-right", settings.MarginRight);
