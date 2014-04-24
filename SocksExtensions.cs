@@ -18,22 +18,12 @@ namespace System
     public static partial class SocksExtensions
     {
 
-        public static ActionResult Pdf(this System.Web.Mvc.Controller controller)
-        {
-            string caller = (new StackFrame(1)).GetMethod().Name;
-            return Pdf(controller, caller, null, null); 
-        }
 
         public static ActionResult Pdf(this System.Web.Mvc.Controller controller, string view, PdfSettings settings = null)
         {
             return Pdf(controller, view, null, settings: settings);
         }
 
-        public static ActionResult Pdf(this System.Web.Mvc.Controller controller, Object model, PdfSettings settings = null)
-        {
-            string caller = (new StackFrame(1)).GetMethod().Name;
-            return Pdf(controller, caller, model, settings: settings); 
-        }
 
         public static ActionResult Pdf(this System.Web.Mvc.Controller controller, string view, Object model, PdfSettings settings = null)
         {
@@ -46,24 +36,8 @@ namespace System
             string footerHtml = controller.RenderViewToString(view + ".footer", model);
 
             var html = controller.RenderViewToString(view, model);
-            html = System.Web.HttpUtility.UrlEncode(html);
-            headerHtml = System.Web.HttpUtility.UrlEncode(headerHtml);
-            data.Add("data-html", html);
-            if (headerHtml != "") { data.Add("data-header-html", headerHtml); }
-            if (footerHtml != "") { data.Add("data-footer-html", footerHtml); }
-            data.Add("dpi", settings.dpi.ToString() );
-            data.Add("margin-left", settings.MarginLeft);
-            data.Add("margin-right", settings.MarginRight);
-            data.Add("margin-top", settings.MarginTop);
-            data.Add("margin-bottom", settings.MarginBottom);
-            if(settings.PageSize != null) data.Add("page-size", settings.PageSize);
-            if(settings.PageWidth != null) data.Add("page-width", settings.PageWidth.ToString() );
-            if(settings.PageHeight != null) data.Add("page-height", settings.PageHeight.ToString() );
 
-            var options = String.Join("&", data.Select(x => x.Key + "=" + x.Value));
-            var generator = @"http://socksjs.herokuapp.com/generate_report";
-            var pdf = HtmlPost.Send(generator, options).ToStream();
-
+            Stream pdf = toPdf( html, headerHtml, footerHtml, settings );
             //use reflection to call protected method :(
             var obj = controller.GetType().InvokeMember("File"
                 , (System.Reflection.BindingFlags.InvokeMethod | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
@@ -101,7 +75,7 @@ namespace System
         }
 
 
-        private static string InlineCss(string html) 
+        private static string InlineCss(string html)
         {
             Match match = null;
             var rx = new Regex(@"<link[^>]*href=""([^h][^t][^t][^p][^""]*.css)""[^>]*>", RegexOptions.IgnoreCase | RegexOptions.ECMAScript);
@@ -148,79 +122,72 @@ namespace System
             { return "~/Views/Shared/_Layout.cshtml"; } //default layout
         }
 
+        
+        private static string wkhtml2pdf_path(){
+            string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "../packages");
+            path = Directory.GetDirectories(path).Where(x => x.Contains("Socks.net")).Last();
+            path = Path.Combine(path, "./content/wkhtmltopdf.exe");
+            return path;
+        } 
 
-        /// <summary>
-        /// Reads the full content of a steam into a byte array
-        /// </summary>
-        /// <param name="input"></param>
-        /// <returns></returns>
-        public static byte[] ReadFully(this Stream input)
+        //calls the lib to do the convert
+        private static Stream toPdf(string html, string header, string footer, PdfSettings settings)
         {
-            byte[] buffer = new byte[16 * 1024];
-            using (MemoryStream ms = new MemoryStream())
-            {
-                int read;
-                while ((read = input.Read(buffer, 0, buffer.Length)) > 0)
-                    ms.Write(buffer, 0, read);
-                return ms.ToArray();
-            }
-        }
-
-    }
-
-
-    public class HtmlPost
-    {
-        public HtmlPost(string url, string data)
-        { _results = _Send(url, data); }
-
-        public static HtmlPost Send(string url, string data)
-        { return new HtmlPost(url, data); }
-
-        private HttpWebResponse _results;
-
-        public Byte[] ToBytes()
-        { return _results.GetResponseStream().ReadFully(); }
-
-        public Stream ToStream()
-        { return _results.GetResponseStream(); }
-
-        public override string ToString()
-        {
-            using (StreamReader reader = new StreamReader(_results.GetResponseStream()))
-                return reader.ReadToEnd();
-        }
-
-        private HttpWebResponse _Send(string url, string postData)
-        {
-            string webpageContent = string.Empty;
-
+            var source = Path.GetTempFileName() + ".html";
+            var desc = Path.GetTempFileName() + ".pdf";
             try
             {
-                byte[] byteArray = Encoding.UTF8.GetBytes(postData);
+                File.WriteAllText(source, html);
+                var args = BuildArgs(source, desc, settings);
 
-                HttpWebRequest webRequest = (HttpWebRequest)WebRequest.Create(url);
-                webRequest.Method = "POST";
-                webRequest.ContentType = "application/x-www-form-urlencoded";
-                webRequest.ContentLength = byteArray.Length;
+                ProcessStartInfo psi = new ProcessStartInfo(wkhtml2pdf_path(), string.Join(" ", args))
+                {
+                    CreateNoWindow = true,
+                    WindowStyle = ProcessWindowStyle.Hidden,
+                    UseShellExecute = false,
+                    RedirectStandardOutput = true
+                };
 
-                using (Stream webpageStream = webRequest.GetRequestStream())
-                    webpageStream.Write(byteArray, 0, byteArray.Length);
-
-                return (HttpWebResponse)webRequest.GetResponse();
+                Process process = Process.Start(psi);
+                process.WaitForExit();
+                return new MemoryStream(File.ReadAllBytes(desc));
             }
-            catch { return null; }
+            finally {
+                if (File.Exists(source)) File.Delete(source);
+                if (File.Exists(desc)) File.Delete(desc);
+            }
         }
+
+
+
+        private static List<string> BuildArgs(string source, string desc, PdfSettings settings)
+        {
+            var args = new List<string>();
+            if (settings.PageHeight != null) args.Add("--page-height " + settings.PageHeight);
+            if (settings.PageWidth != null) args.Add("--page-width " + settings.PageWidth);
+            if (settings.PageSize != null) args.Add("--page-size " + settings.PageSize);
+            if (settings.dpi > 0) args.Add("--dpi " + settings.dpi);
+            if (settings.MarginLeft != null) args.Add("--margin-left " + settings.MarginLeft);
+            if (settings.MarginRight != null) args.Add("--margin-right " + settings.MarginRight);
+            if (settings.MarginTop != null) args.Add("--margin-top " + settings.MarginTop);
+            if (settings.MarginBottom != null) args.Add("--margin-bottom " + settings.MarginBottom);
+            if (settings.Landscape) args.Add("--orientation Landscape" );
+            args.Add(source);
+            args.Add(desc);
+            return args;
+        }
+
     }
+
 
 
     public class PdfSettings
-    { 
-        public int dpi = 150;
-        public string MarginLeft = "2mm";
-        public string MarginRight = "2mm";
-        public string MarginTop = "2mm";
-        public string MarginBottom = "2mm";
+    {
+        public int dpi = 0;
+        public string MarginLeft = null;
+        public string MarginRight = null;
+        public string MarginTop = null;
+        public string MarginBottom = null;
         public bool Landscape = false;
         public string PageSize = null; //Letter, Legal, A1, ...
         public int? PageHeight = null;

@@ -2,11 +2,11 @@
 <package>
   <metadata>
     <id>Socks.net</id>
-    <version>1.0.3</version>
+    <version>1.0.7</version>
     <authors>Lex Childs</authors>
     <owners>Lex Childs</owners>
     <licenseUrl>https://github.com/Praeses/socks.net/blob/master/LICENSE</licenseUrl>
-    <description>socks.net is a wrapper around the socks PDF service to make PDF generation simple in .net</description>
+    <description>socks.net is a wrapper around wkhtmltopdf to handle pdf using the razor engine</description>
     <summary>Pdf Generation for .Net</summary>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <language>en-US</language>
@@ -15,6 +15,7 @@
     </dependencies>
   </metadata>
   <files>
-    <file src="SocksExtensions.cs" target="content/Extenstions/SocksExtensions.cs" />
+    <file src="SocksExtensions.cs" target="content/Extensions/SocksExtensions.cs" />
+	<file src="wkhtmltopdf.exe"    target="content/wkhtmltopdf.exe" />
   </files>
 </package>
