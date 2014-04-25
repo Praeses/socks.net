@@ -2,7 +2,7 @@
 <package>
   <metadata>
     <id>Socks.net</id>
-    <version>1.0.7</version>
+    <version>1.0.12</version>
     <authors>Lex Childs</authors>
     <owners>Lex Childs</owners>
     <licenseUrl>https://github.com/Praeses/socks.net/blob/master/LICENSE</licenseUrl>
@@ -16,6 +16,6 @@
   </metadata>
   <files>
     <file src="SocksExtensions.cs" target="content/Extensions/SocksExtensions.cs" />
-	<file src="wkhtmltopdf.exe"    target="content/wkhtmltopdf.exe" />
+	<file src="wkhtmltopdf.exe"    target="tools/wkhtmltopdf.exe" />
   </files>
 </package>

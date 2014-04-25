@@ -70,7 +70,7 @@ namespace System
                 viewResult.View.Render(viewContext, sw);
 
                 var html = sw.GetStringBuilder().ToString();
-                return InlineJs(InlineCss(html));
+                return InlineImg(InlineJs(InlineCss(html)));
             }
         }
 
@@ -106,6 +106,22 @@ namespace System
         }
 
 
+        private static string InlineImg(string html)
+        {
+            Match match = null;
+            var rx = new Regex(@"<img[^>]*src=""([^d][^a][^t][^a][^:][^""]*)""[^>]*>", RegexOptions.IgnoreCase | RegexOptions.ECMAScript);
+            match = rx.Match(html);
+            while (match.Success)
+            {
+                var path = HttpContext.Current.Server.MapPath(match.Groups[1].ToString());
+                var content =  Convert.ToBase64String(File.ReadAllBytes(path));
+                html = html.Replace(match.ToString(), string.Format(@"<img src=""data:image/gif;base64,{0}"" />", content));
+                match = rx.Match(html);
+            }
+            return html;
+        }
+
+
         private static string GetLayout(System.Web.Mvc.Controller controller, string partialPath)
         {
             try
@@ -125,8 +141,9 @@ namespace System
         
         private static string wkhtml2pdf_path(){
             string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "../packages");
-            path = Directory.GetDirectories(path).Where(x => x.Contains("Socks.net")).Last();
-            path = Path.Combine(path, "./content/wkhtmltopdf.exe");
+            path = Directory.GetDirectories(path).Where(x => x.Contains("Socks.net"))
+                .Select(x => new DirectoryInfo(x)).OrderBy(x => x.LastWriteTime).Last().FullName;
+            path = Path.Combine(path, "./tools/wkhtmltopdf.exe");
             return path;
         } 
 
