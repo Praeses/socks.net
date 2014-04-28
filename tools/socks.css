@@ -1,0 +1,14 @@
+html,body { margin:0 }
+html,body { padding:0 }
+
+.socks-page { overflow:hidden }
+.socks-page > footer { overflow:visible }
+.socks-page { page-break-after:always; }
+.socks-page:last-of-type { page-break-after:avoid; }
+.socks-page { position:relative; }
+.socks-page footer{
+  position:absolute;
+  bottom:0;
+  background:white;
+}
+

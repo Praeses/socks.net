@@ -15,7 +15,9 @@
     </dependencies>
   </metadata>
   <files>
-    <file src="SocksExtensions.cs" target="content/Extensions/SocksExtensions.cs" />
-	<file src="wkhtmltopdf.exe"    target="tools/wkhtmltopdf.exe" />
+    <file src="content/SocksExtensions.cs" target="content/Extensions/SocksExtensions.cs" />
+	<file src="tools/wkhtmltopdf.exe"    target="tools/wkhtmltopdf.exe" />
+	<file src="tools/socks.css"    target="tools/socks.css" />
+	<file src="tools/socks.js"    target="tools/socks.js" />
   </files>
 </package>
