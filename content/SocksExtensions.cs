@@ -34,7 +34,6 @@ namespace System
             if (settings.Landscape) data.Add("orientation", "Landscape");
 
             var html = controller.RenderViewToString(view, model, settings);
-            File.WriteAllText(@"C:\Users\lchilds\Desktop\test.html", html);
 
             Stream pdf = toPdf( html, settings );
             //use reflection to call protected method :(
