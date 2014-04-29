@@ -143,10 +143,17 @@ namespace System
         private static string IncludeSockJavascript(string html, PdfSettings settings)
         {
             string pdf_settings = new JavaScriptSerializer().Serialize(settings);
-            var path = tools_path() + "socks.js";
+
+            var path = tools_path() + "jquery-1.11.0.min.js";
             var content = "<script type='text/javascript'>";
+            content += File.ReadAllText(path) + "</script>";
+            html += content;
+
+            path = tools_path() + "socks.js";
+            content = "<script type='text/javascript'>";
             if (!settings.Landscape) content += "var pdf_settings=" + pdf_settings + ";";
             content += File.ReadAllText(path) + "</script>";
+
             return html + content;
         }
 
