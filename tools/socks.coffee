@@ -31,9 +31,7 @@ class Page
     $("body").append @el_outer
     @load_settings()
     @max = @el.height()
-    @max -= $('header',@el).height()
-    @max -= $('footer',@el).height()
-    @max -= (@el_outer.innerHeight() - @el.height() ) * 1.5
+    @max -= $('footer',@el).outerHeight()
     @running_height = 0
 
   load_settings: =>
@@ -56,17 +54,15 @@ class Page
 
   heightOfChildren: () =>
     height = 0
-    height += $(child).height() for child in @el.children()
+    height += $(child).outerHeight() for child in @el.children()
     height
 
   add: (elm) =>
-    overflow = []
-    if @heightOfChildren() + heightWithin(@el, elm) < @max || @el.children().length == 0
-      @el.append( elm )
-    else
-      overflow.push elm
-    overflow
-
+    @el.append( elm )
+    if @heightOfChildren() > @max && @el.children().length > 1
+      $(elm).remove()
+      return [elm]
+    []
 
 
 

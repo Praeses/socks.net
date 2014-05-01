@@ -35,18 +35,37 @@ namespace System
 
             var html = controller.RenderViewToString(view, model, settings);
 
+            if (settings.Action == PdfSettings.PdfAction.Html)
+                return RenderPdfAsHtml(controller, html);
+
             Stream pdf = toPdf( html, settings );
+
+            if (settings.Action == PdfSettings.PdfAction.Download) {
+                var filename = settings.Filename ?? (Guid.NewGuid().ToString("N") + ".pdf");
+                controller.Response.AppendHeader("Content-Disposition", "attachment; filename=" + filename);
+            }
+
             //use reflection to call protected method :(
             var obj = controller.GetType().InvokeMember("File"
                 , (System.Reflection.BindingFlags.InvokeMethod | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
                 , Type.DefaultBinder
                 , controller
                 , new object[] { pdf, @"application/pdf" });
-
             return (ActionResult)obj;
+            
         }
 
 
+
+
+        private static ActionResult RenderPdfAsHtml(System.Web.Mvc.Controller controller, string html)
+        {
+            html = IncludeSockScreenStyles(html);
+            controller.Response.Clear();
+            controller.Response.Write(html);
+            controller.Response.End();
+            return null;
+        }
 
 
 
@@ -75,6 +94,8 @@ namespace System
                 html = InlineImg(html);
                 html = IncludeSockStyles(html);
                 html = IncludeSockJavascript(html, settings);
+                html = html.Replace("{{page}}" , @"<span data-pdf='current_page'></span>"); 
+                html = html.Replace("{{pages}}", @"<span data-pdf='total_page'></span>"); 
                 return html;
             }
         }
@@ -122,6 +143,21 @@ namespace System
                 var content =  Convert.ToBase64String(File.ReadAllBytes(path));
                 html = html.Replace(match.ToString(), string.Format(@"<img src=""data:image/gif;base64,{0}"" />", content));
                 match = rx.Match(html);
+            }
+            return html;
+        }
+
+
+        private static string IncludeSockScreenStyles(string html)
+        {
+            Match match = null;
+            var rx = new Regex(@"< *head *>", RegexOptions.IgnoreCase | RegexOptions.ECMAScript);
+            match = rx.Match(html);
+            if (match.Success)
+            {
+                var path = tools_path() + "screen.css";
+                var content = "<style>" + File.ReadAllText(path) + "</style>";
+                html = html.Replace(match.ToString(), match.ToString() + content);
             }
             return html;
         }
@@ -247,6 +283,12 @@ namespace System
 
     public class PdfSettings
     {
+        public enum PdfAction { 
+            Open,
+            Download,
+            Html //Good for debugging
+        };
+
         public string MarginLeft = "0.75in";
         public string MarginRight = "0.75in";
         public string MarginTop = "0.75in";
@@ -259,6 +301,9 @@ namespace System
         public string MarginAll { set {
             MarginLeft = MarginRight = MarginTop = MarginBottom = value;
         } }
+
+        public PdfAction Action = PdfAction.Open;
+        public string Filename = null;
     }
 
 }

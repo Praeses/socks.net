@@ -2,7 +2,7 @@
 <package>
   <metadata>
     <id>Socks.net</id>
-    <version>1.0.16</version>
+    <version>1.0.17</version>
     <authors>Lex Childs</authors>
     <owners>Lex Childs</owners>
     <licenseUrl>https://github.com/Praeses/socks.net/blob/master/LICENSE</licenseUrl>
@@ -16,9 +16,10 @@
   </metadata>
   <files>
     <file src="content/SocksExtensions.cs" target="content/Extensions/SocksExtensions.cs" />
-	<file src="tools/wkhtmltopdf.exe"    target="tools/wkhtmltopdf.exe" />
-	<file src="tools/socks.css"    target="tools/socks.css" />
-	<file src="tools/socks.js"    target="tools/socks.js" />
-	<file src="tools/jquery-1.11.0.min.js"    target="tools/jquery-1.11.0.min.js" />
+    <file src="tools/wkhtmltopdf.exe"    target="tools/wkhtmltopdf.exe" />
+    <file src="tools/socks.css"    target="tools/socks.css" />
+    <file src="tools/screen.css"    target="tools/screen.css" />
+    <file src="tools/socks.js"    target="tools/socks.js" />
+    <file src="tools/jquery-1.11.0.min.js"    target="tools/jquery-1.11.0.min.js" />
   </files>
 </package>

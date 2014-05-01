@@ -35,9 +35,7 @@
       $("body").append(this.el_outer);
       this.load_settings();
       this.max = this.el.height();
-      this.max -= $('header', this.el).height();
-      this.max -= $('footer', this.el).height();
-      this.max -= (this.el_outer.innerHeight() - this.el.height()) * 1.5;
+      this.max -= $('footer', this.el).outerHeight();
       this.running_height = 0;
     }
 
@@ -67,20 +65,18 @@
       _ref = this.el.children();
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         child = _ref[_i];
-        height += $(child).height();
+        height += $(child).outerHeight();
       }
       return height;
     };
 
     Page.prototype.add = function(elm) {
-      var overflow;
-      overflow = [];
-      if (this.heightOfChildren() + heightWithin(this.el, elm) < this.max || this.el.children().length === 0) {
-        this.el.append(elm);
-      } else {
-        overflow.push(elm);
+      this.el.append(elm);
+      if (this.heightOfChildren() > this.max && this.el.children().length > 1) {
+        $(elm).remove();
+        return [elm];
       }
-      return overflow;
+      return [];
     };
 
     return Page;

@@ -1,9 +1,9 @@
 socks.net
 =========
 
-socks.net is a wrapper around the socks PDF service to make PDF generation simple in .net
+Socks.net is a tool to use the razor engine to make your PDFs.
 
-Socks is a web service that takes html and generates Pdfs using the webkit rendering engine.
+It renders your razor views passes it to wkhtmltopdf and sends the pdf file to the web user
 
 Installation
 --------------
@@ -22,27 +22,30 @@ Example Action
 ```sh
         public ActionResult Index()
         {
-            return this.Pdf();
+            return this.Pdf("Index");
         }
 ```
-    
-    
+
+
 Headers / Footers
 -----
-Headers and footers are generated from separate view files. The header and footer view will repeat on each page of the pdf. To use headers of views create a razor of the format ViewName.header.cshtml
-This will tell socks.net to include the header in the pdf
+Use the header and footer tag
+```html
+<header>
+  <h1>Header for every page !!!</h1>
+</header>
+```
 
-In header and footer text the following variables will be substituted.
-   * [page]       Replaced by the number of the pages currently being printed
-   * [frompage]   Replaced by the number of the first page to be printed
-   * [topage]     Replaced by the number of the last page to be printed
-   * [webpage]    Replaced by the URL of the page being printed
-   * [section]    Replaced by the name of the current section
-   * [subsection] Replaced by the name of the current subsection
-   * [date]       Replaced by the current date in system local format
-   * [time]       Replaced by the current time in system local format
-   * [title]      Replaced by the title of the of the current page object
-   * [doctitle]   Replaced by the title of the output document
-   * [sitepage]   Replaced by the number of the page in the current site being converted
-   * [sitepages]  Replaced by the number of pages in the current site being converted
+Paging and Page Numbers
+-----
+Socks splits up the contents of your body tag onto multiple pages.
+If you want an element to page, put it in the body.
+If not wrap it in a div
+
+For page numbers the following magic strings are replaced with the corresponding values
+  * {{page}}            Replaced with the current page
+  * {{pages}}           Replaced with the number of pages
+
+
+
 

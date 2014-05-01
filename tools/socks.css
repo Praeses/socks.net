@@ -1,7 +1,7 @@
 html,body { margin:0 }
 html,body { padding:0 }
 
-.socks-page { overflow:hidden }
+.socks-page > div{ overflow:hidden }
 .socks-page footer { overflow:visible }
 .socks-page { page-break-after:always; }
 .socks-page:last-of-type { page-break-after:avoid; }
