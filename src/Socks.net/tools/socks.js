@@ -35,7 +35,6 @@
       $("body").append(this.el_outer);
       this.load_settings();
       this.max = this.el.height();
-      this.max -= $('footer', this.el).outerHeight();
       this.running_height = 0;
     }
 
@@ -65,13 +64,15 @@
       _ref = this.el.children();
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         child = _ref[_i];
-        height += $(child).outerHeight();
+        height += $(child).outerHeight(true);
       }
       return height;
     };
 
     Page.prototype.add = function(elm) {
       this.el.append(elm);
+      window.scrollTo(0, document.body.scrollHeight);
+      debugger;
       if (this.heightOfChildren() > this.max && this.el.children().length > 1) {
         $(elm).remove();
         return [elm];

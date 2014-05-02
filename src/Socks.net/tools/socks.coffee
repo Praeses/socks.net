@@ -31,7 +31,6 @@ class Page
     $("body").append @el_outer
     @load_settings()
     @max = @el.height()
-    @max -= $('footer',@el).outerHeight()
     @running_height = 0
 
   load_settings: =>
@@ -50,15 +49,16 @@ class Page
       @el_outer.css "height", pdf_settings.PageHeight * m + "in"
     $('footer',@el).css "left", 0
     $('footer',@el).css "right", 0
-    #@el.css "margin-bottom", footer.height()
 
   heightOfChildren: () =>
     height = 0
-    height += $(child).outerHeight() for child in @el.children()
+    height += $(child).outerHeight(true) for child in @el.children()
     height
 
   add: (elm) =>
     @el.append( elm )
+    window.scrollTo(0,document.body.scrollHeight)
+    debugger
     if @heightOfChildren() > @max && @el.children().length > 1
       $(elm).remove()
       return [elm]
