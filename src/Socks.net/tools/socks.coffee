@@ -1,4 +1,4 @@
-#logs = []
+﻿#logs = []
 #console = {}
 #console.log = () =>
 #  logs.push arg for arg in arguments

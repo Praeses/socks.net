@@ -42,6 +42,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="PdfSettings.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Socks.cs" />
     <Compile Include="SocksExtensions.cs" />
@@ -49,7 +50,12 @@
   <ItemGroup>
     <Content Include="tools\screen.css" />
     <Content Include="tools\socks.css" />
-    <Content Include="tools\socks.js" />
+    <Content Include="tools\socks.js">
+      <DependentUpon>socks.coffee</DependentUpon>
+    </Content>
+    <Content Include="tools\socks.min.js">
+      <DependentUpon>socks.coffee</DependentUpon>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <None Include="tools\socks.coffee" />
