@@ -58,6 +58,10 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\..\socks.net.nuspec">
+      <Link>socks.net.nuspec</Link>
+      <SubType>Designer</SubType>
+    </None>
     <None Include="tools\socks.coffee" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

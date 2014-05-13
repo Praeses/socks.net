@@ -177,11 +177,7 @@ namespace Socksnet
 
         private static string tools_path()
         {
-            string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "../packages");
-            path = Directory.GetDirectories(path).Where(x => x.Contains("Socks.net"))
-                .Select(x => new DirectoryInfo(x)).OrderBy(x => x.LastWriteTime).Last().FullName;
-            path = Path.Combine(path, "./tools/");
-            return path;
+            return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "bin/Socks.Net/");
         }
 
         //calls the lib to do the convert
