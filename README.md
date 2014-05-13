@@ -42,6 +42,8 @@ Socks splits up the contents of your body tag onto multiple pages.
 If you want an element to page, put it in the body.
 If not wrap it in a div
 
+Tables behave slightly differently than all other elements. Tables under the body tag will automatically be paged.
+
 For page numbers the following magic strings are replaced with the corresponding values
   * {{page}}            Replaced with the current page
   * {{pages}}           Replaced with the number of pages

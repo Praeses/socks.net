@@ -28,9 +28,12 @@
     function Page() {
       this.add = __bind(this.add, this);
 
+      this.tableOverflow = __bind(this.tableOverflow, this);
+
       this.heightOfChildren = __bind(this.heightOfChildren, this);
 
       this.load_settings = __bind(this.load_settings, this);
+      this.first_elm = true;
       this.el = $(empty_page).clone();
       this.el_outer = $("<div class='socks-page'></page>");
       this.el_outer.append(this.el);
@@ -71,11 +74,31 @@
       return height;
     };
 
+    Page.prototype.tableOverflow = function(table) {
+      var new_table, tr, trs;
+      new_table = $(table).clone();
+      $('tbody', new_table).empty();
+      $(table).replaceWith(new_table);
+      trs = $('tbody tr', table).toArray();
+      while (this.heightOfChildren() < this.max) {
+        tr = trs.shift();
+        $('tbody', new_table).append(tr);
+      }
+      tr = $('tbody tr', new_table).last();
+      $('tbody', table).prepend(tr);
+      return table;
+    };
+
     Page.prototype.add = function(elm) {
       this.el.append(elm);
-      window.scrollTo(0, document.body.scrollHeight);
-      debugger;
-      if (this.heightOfChildren() > this.max && this.el.children().length > 1) {
+      if (this.heightOfChildren() > this.max && elm.tagName === "TABLE") {
+        return [this.tableOverflow(elm)];
+      }
+      if (this.first_elm) {
+        this.first_elm = false;
+        return [];
+      }
+      if (this.heightOfChildren() > this.max) {
         $(elm).remove();
         return [elm];
       }

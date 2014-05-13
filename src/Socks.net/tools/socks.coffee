@@ -1,12 +1,4 @@
-﻿#logs = []
-#console = {}
-#console.log = () =>
-#  logs.push arg for arg in arguments
-#window.onError = (error) ->
-#  $("body").text error
-
-
-$ = jQuery
+﻿$ = jQuery
 
 empty_page = $("<div></div>")
 header = $("header").remove()
@@ -21,10 +13,13 @@ heightWithin = (container, elm) ->
   height = $(elm).height()
   elm.remove()
   height || 0
+  
+  
 
 
 class Page
   constructor: ->
+    @first_elm = true
     @el = $(empty_page).clone()
     @el_outer = $("<div class='socks-page'></page>")
     @el_outer.append @el
@@ -54,12 +49,34 @@ class Page
     height = 0
     height += $(child).outerHeight(true) for child in @el.children()
     height
+    
+  tableOverflow: (table) =>
+    new_table = $(table).clone()
+    $('tbody', new_table).empty()
+    $(table).replaceWith(new_table)
+    trs = $('tbody tr', table).toArray()
+    
+    while @heightOfChildren() < @max 
+      tr = trs.shift()
+      $('tbody', new_table).append(tr)
+    
+    tr = $('tbody tr', new_table).last()
+    $('tbody', table).prepend(tr)
+      
+    table 
+    
 
   add: (elm) =>
     @el.append( elm )
-    window.scrollTo(0,document.body.scrollHeight)
-    debugger
-    if @heightOfChildren() > @max && @el.children().length > 1
+    
+    if @heightOfChildren() > @max && elm.tagName == "TABLE" 
+      return [@tableOverflow(elm)]
+      
+    if @first_elm
+      @first_elm = false
+      return []
+    
+    if @heightOfChildren() > @max
       $(elm).remove()
       return [elm]
     []
@@ -104,11 +121,3 @@ for page in pages
 
 
 
-
-#log_el = $("<div>")
-#log_el.append("<div>#{log}</div>") for log in logs
-#log_el.css("position","fixed")
-#log_el.css("background-color","red")
-#log_el.css("font-size","3em")
-#log_el.css("z-index","9999")
-#$('body').prepend(log_el)
