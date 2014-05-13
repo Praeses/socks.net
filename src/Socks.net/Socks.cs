@@ -177,7 +177,7 @@ namespace Socksnet
 
         private static string tools_path()
         {
-            return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "bin/Socks.Net/");
+            return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "ThirdPartyDLLs/Socks.Net/");
         }
 
         //calls the lib to do the convert
