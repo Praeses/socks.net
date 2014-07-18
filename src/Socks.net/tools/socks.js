@@ -35,7 +35,7 @@
       this.load_settings = __bind(this.load_settings, this);
       this.first_elm = true;
       this.el = $(empty_page).clone();
-      this.el_outer = $("<div class='socks-page'></page>");
+      this.el_outer = $("<div class='socks-page'></div>");
       this.el_outer.append(this.el);
       $("body").append(this.el_outer);
       this.load_settings();
