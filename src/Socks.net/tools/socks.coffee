@@ -21,7 +21,7 @@ class Page
   constructor: ->
     @first_elm = true
     @el = $(empty_page).clone()
-    @el_outer = $("<div class='socks-page'></page>")
+    @el_outer = $("<div class='socks-page'></div>")
     @el_outer.append @el
     $("body").append @el_outer
     @load_settings()
