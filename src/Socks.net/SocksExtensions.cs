@@ -18,10 +18,7 @@ namespace System.Web.Mvc
 
         public static ActionResult Pdf(this Controller controller, string view, Object model, PdfSettings settings = null)
         {
-            var data = new Dictionary<string, string>();
-
             if (settings == null) settings = new PdfSettings();
-            if (settings.Landscape) data.Add("orientation", "Landscape");
 
             var html = Socks.RenderViewToString(controller, view, model, settings);
             //var html = controller.RenderViewToString(view, model, settings);
@@ -50,10 +47,7 @@ namespace System.Web.Mvc
 
         public static Stream PdfStream(this Controller controller, string view, Object model, PdfSettings settings = null)
         {
-            var data = new Dictionary<string, string>();
-
             if (settings == null) settings = new PdfSettings();
-            if (settings.Landscape) data.Add("orientation", "Landscape");
 
             var html = Socks.RenderViewToString(controller, view, model, settings);
 

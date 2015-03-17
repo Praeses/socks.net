@@ -20,9 +20,23 @@ namespace Socksnet
         public string MarginTop = "0.75in";
         public string MarginBottom = "0.75in";
         public bool Landscape = false;
+
         //public string PageSize = null; //Letter, Legal, A1, ...
         public decimal PageWidth = 8.5m;
         public decimal PageHeight = 11m;
+
+        public bool EnableSocksJsAndCss = true;
+
+        public string MasterPage;
+
+        private Func<string, string> _fixCssPath;
+        public Func<string, string> FixCssPathMethod { set { _fixCssPath = value; }}
+        internal string FixCssPath(string path)
+        {
+            if (_fixCssPath != null)
+                return _fixCssPath(path);
+            return path;
+        }
 
         public string MarginAll
         {

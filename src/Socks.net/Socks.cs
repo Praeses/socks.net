@@ -36,9 +36,15 @@ namespace Socksnet
 
             using (StringWriter sw = new StringWriter())
             {
-                string layoutPath = GetLayout(controller, partialPath);
+                string layoutPath = settings.MasterPage ?? GetLayout(controller, partialPath);
                 var viewResult = ViewEngines.Engines.FindView(controller.ControllerContext, partialPath, layoutPath);
-                if (viewResult.View == null) return "";
+
+                if (viewResult.View == null)
+                {
+                    var message = "could not find view:\n" + string.Join("\n", viewResult.SearchedLocations);
+                    throw new Exception(message);
+                }
+
                 ViewContext viewContext = new ViewContext(controller.ControllerContext, viewResult.View, controller.ViewData, controller.TempData, sw);
                 foreach (var item in viewContext.Controller.ViewData.ModelState)
                     if (!viewContext.ViewData.ModelState.Keys.Contains(item.Key))
@@ -47,10 +53,10 @@ namespace Socksnet
                 viewResult.View.Render(viewContext, sw);
 
                 var html = sw.GetStringBuilder().ToString();
-                html = InlineCss(html);
+                html = InlineCss(html, settings);
                 html = InlineJs(html);
                 html = InlineImg(html);
-                html = IncludeSockStyles(html);
+                html = IncludeSockStyles(html, settings);
                 html = IncludeSockJavascript(html, settings);
                 html = html.Replace("{{page}}", @"<span data-pdf='current_page'></span>");
                 html = html.Replace("{{pages}}", @"<span data-pdf='total_page'></span>");
@@ -59,14 +65,16 @@ namespace Socksnet
         }
 
 
-        private static string InlineCss(string html)
+        private static string InlineCss(string html, PdfSettings settings)
         {
             Match match = null;
-            var rx = new Regex(@"<link[^>]*href=""([^h][^t][^t][^p][^""]*.css)""[^>]*>", RegexOptions.IgnoreCase | RegexOptions.ECMAScript);
+            var rx = new Regex(@"<link[^>]*href=[""']([^h][^t][^t][^p][^""']*.css)[^""']*[""'][^>]*((/>)|(>\s*</link>))", RegexOptions.IgnoreCase | RegexOptions.ECMAScript);
             match = rx.Match(html);
             while (match.Success)
             {
-                var path = HttpContext.Current.Server.MapPath(match.Groups[1].ToString());
+                var source = match.Groups[1].ToString();
+                source = settings.FixCssPath(source);
+                var path = HttpContext.Current.Server.MapPath(source);
                 var content = File.ReadAllText(path);
                 html = html.Replace(match.ToString(), string.Format(@"<style>{0}</style>", content));
                 match = rx.Match(html);
@@ -77,11 +85,12 @@ namespace Socksnet
         private static string InlineJs(string html)
         {
             Match match = null;
-            var rx = new Regex(@"<scipt[^>]*src=""([^""]*.js)""[^>]*>", RegexOptions.IgnoreCase | RegexOptions.ECMAScript);
+            var rx = new Regex(@"<script[^>]*src=[""']((?!http)[^""']*.js)[^""']*[""'][^>]*((/>)|(>\s*</script>))", RegexOptions.IgnoreCase | RegexOptions.ECMAScript);
             match = rx.Match(html);
             while (match.Success)
             {
-                var path = HttpContext.Current.Server.MapPath(match.Groups[1].ToString());
+                var src = match.Groups[1].ToString();
+                var path = HttpContext.Current.Server.MapPath(src);
                 var content = File.ReadAllText(path);
                 html = html.Replace(match.ToString(), string.Format(@"<script>{0}</script>", content));
                 match = rx.Match(html);
@@ -120,8 +129,11 @@ namespace Socksnet
             return html;
         }
 
-        private static string IncludeSockStyles(string html)
+        private static string IncludeSockStyles(string html, PdfSettings settings)
         {
+            if (!settings.EnableSocksJsAndCss)
+                return html;
+
             Match match = null;
             var rx = new Regex(@"< *head *>", RegexOptions.IgnoreCase | RegexOptions.ECMAScript);
             match = rx.Match(html);
@@ -143,9 +155,12 @@ namespace Socksnet
             content += File.ReadAllText(path) + "</script>";
             html += content;
 
+            if (!settings.EnableSocksJsAndCss)
+                return html;
+
             path = tools_path() + "socks.js";
             content = "<script type='text/javascript'>";
-            if (!settings.Landscape) content += "var pdf_settings=" + pdf_settings + ";";
+            content += "var pdf_settings=" + pdf_settings + ";";
             content += File.ReadAllText(path) + "</script>";
 
             return html + content;
@@ -217,16 +232,26 @@ namespace Socksnet
         {
             var args = new List<string>();
             //NOTE: header and footers cannot be suppered using header-html 
-            // untill wkhtmltopdf is patched  :(
+            // until wkhtmltopdf is patched  :(
             //if( has_header) args.Add("--header-html " + header);
             //if (has_footer) args.Add("--footer-html " + footer);
             args.Add("--page-height " + settings.PageHeight + "in");
             args.Add("--page-width " + settings.PageWidth + "in");
             //if (settings.PageSize != null) args.Add("--page-size " + settings.PageSize);
-            args.Add("--margin-left 0"); //done in css
-            args.Add("--margin-right 0"); //done in css
-            args.Add("--margin-top 0"); //done in css
-            args.Add("--margin-bottom 0"); //done in css
+            if (settings.EnableSocksJsAndCss)
+            {
+                args.Add("--margin-left 0");
+                args.Add("--margin-right 0");
+                args.Add("--margin-top 0");
+                args.Add("--margin-bottom 0");
+            }
+            else
+            {
+                args.Add("--margin-left " + settings.MarginLeft);
+                args.Add("--margin-right " + settings.MarginRight);
+                args.Add("--margin-top " + settings.MarginTop);
+                args.Add("--margin-bottom " + settings.MarginBottom);
+            }
             if (settings.Landscape) args.Add("--orientation Landscape");
             args.Add(source);
             args.Add(desc);
