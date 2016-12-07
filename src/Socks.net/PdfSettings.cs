@@ -12,7 +12,8 @@ namespace Socksnet
         {
             Open,
             Download,
-            Html //Good for debugging
+            Html, //Good for debugging
+            SaveToDisk
         };
 
         public string MarginLeft = "0.75in";
