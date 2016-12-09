@@ -75,9 +75,13 @@ namespace Socksnet
                 var source = match.Groups[1].ToString();
                 source = settings.FixCssPath(source);
                 var path = HttpContext.Current.Server.MapPath(source);
-                var content = File.ReadAllText(path);
-                html = html.Replace(match.ToString(), string.Format(@"<style>{0}</style>", content));
-                match = rx.Match(html);
+                try
+                {
+                    var content = File.ReadAllText(path);
+                    html = html.Replace(match.ToString(), string.Format(@"<style>{0}</style>", content));
+                }
+                catch
+                { return html; }
             }
             return html;
         }
