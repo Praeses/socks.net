@@ -1,0 +1,43 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="tools\jquery-1.12.4.min.js" />
+    <None Remove="tools\screen.css" />
+    <None Remove="tools\socks.coffee" />
+    <None Remove="tools\socks.css" />
+    <None Remove="tools\socks.js" />
+    <None Remove="tools\socks.min.js" />
+    <None Remove="tools\wkhtmltopdf.exe" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="tools\jquery-1.12.4.min.js">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="tools\screen.css">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="tools\socks.coffee" />
+    <EmbeddedResource Include="tools\socks.css">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="tools\socks.js">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="tools\socks.min.js">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="tools\wkhtmltopdf.exe">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.0" />
+  </ItemGroup>
+
+</Project>

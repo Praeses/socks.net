@@ -1,7 +1,9 @@
-socks.net
+socks.Core
 =========
 
-Socks.net is a tool to use the razor engine to make your PDFs.
+Socks.Core is a tool to use the razor engine to make your PDFs.
+
+This is a port of Socks.Net to run on .net Core 2
 
 It renders your razor views passes it to wkhtmltopdf and sends the pdf file to the web user
 

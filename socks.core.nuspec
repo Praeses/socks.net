@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package>
+  <metadata>
+    <id>Socks.Core</id>
+    <version>1.2.00</version>
+    <authors>Lex Childs</authors>
+    <owners>Lex Childs</owners>
+    <licenseUrl>https://github.com/Praeses/socks.net/blob/master/LICENSE</licenseUrl>
+    <description>Socks.Core is a wrapper around wkhtmltopdf to handle pdf using the razor engine. Supports Core 2.0</description>
+    <summary>Pdf Generation for .Net</summary>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <language>en-US</language>
+    <projectUrl>https://github.com/Praeses/socks.net/</projectUrl>
+    <dependencies>
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="src/bin/Debug/netcoreapp2.0/Socks.Core.dll"  target="lib\netcoreapp2.0" />
+    <file src="src/tools/wkhtmltopdf.exe"       			target="Content/ThirdPartyDLLs/Socks.Net/wkhtmltopdf.exe" />
+	<file src="src/tools/jquery-1.12.4.min.js"  			target="Content/ThirdPartyDLLs/Socks.Net/jquery-1.12.4.min.js" />
+    <file src="src/tools/socks.css"           				target="Content/ThirdPartyDLLs/Socks.Net/socks.css" />
+    <file src="src/tools/screen.css"          				target="Content/ThirdPartyDLLs/Socks.Net/screen.css" />
+    <file src="src/tools/socks.min.js"        				target="Content/ThirdPartyDLLs/Socks.Net/socks.js" />
+  </files>
+</package>
