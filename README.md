@@ -1,4 +1,4 @@
-socks.Core
+Socks.Core
 =========
 
 Socks.Core is a tool to use the razor engine to make your PDFs.
@@ -11,7 +11,7 @@ Installation
 --------------
 
 ```sh
-Install-Package socks.net
+Install-Package socks.core
 ```
 
 
