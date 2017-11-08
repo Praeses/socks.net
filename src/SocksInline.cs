@@ -42,7 +42,10 @@ namespace Socksnet
                     match = rx.Match(html);
                 }
                 catch  /* bad asset path, dont kill the render */ 
-                { return html; }
+                {
+                    html = html.Replace(match.ToString(), "");
+                    match = rx.Match(html);
+                }
             }
             return html;
         }
@@ -63,7 +66,11 @@ namespace Socksnet
                     html = html.Replace(match.ToString(), string.Format(@"<script>{0}</script>", content));
                     match = rx.Match(html);
                 }
-                catch { /* bad asset path, dont kill the render */ }
+                catch {
+                    /* bad asset path, dont kill the render */
+                    html = html.Replace(match.ToString(), "");
+                    match = rx.Match(html);
+                }
             }
             return html;
         }
@@ -83,7 +90,11 @@ namespace Socksnet
                     html = html.Replace(match.ToString(), string.Format(@"<img src=""data:image/gif;base64,{0}"" />", content));
                     match = rx.Match(html);
                 }
-                catch { return html; } /* bad asset path, dont kill the render */
+                catch
+                {  /* bad asset path, dont kill the render */
+                    html = html.Replace(match.ToString(), "");
+                    match = rx.Match(html);
+                } 
             }
             return html;
         }

@@ -2,7 +2,7 @@
 <package>
   <metadata>
     <id>Socks.Core</id>
-    <version>1.2.00</version>
+    <version>1.2.02</version>
     <authors>Lex Childs</authors>
     <owners>Lex Childs</owners>
     <licenseUrl>https://github.com/Praeses/socks.net/blob/master/LICENSE</licenseUrl>
@@ -16,10 +16,5 @@
   </metadata>
   <files>
     <file src="src/bin/Debug/netcoreapp2.0/Socks.Core.dll"  target="lib\netcoreapp2.0" />
-    <file src="src/tools/wkhtmltopdf.exe"       			target="Content/ThirdPartyDLLs/Socks.Net/wkhtmltopdf.exe" />
-	<file src="src/tools/jquery-1.12.4.min.js"  			target="Content/ThirdPartyDLLs/Socks.Net/jquery-1.12.4.min.js" />
-    <file src="src/tools/socks.css"           				target="Content/ThirdPartyDLLs/Socks.Net/socks.css" />
-    <file src="src/tools/screen.css"          				target="Content/ThirdPartyDLLs/Socks.Net/screen.css" />
-    <file src="src/tools/socks.min.js"        				target="Content/ThirdPartyDLLs/Socks.Net/socks.js" />
   </files>
 </package>

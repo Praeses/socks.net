@@ -12,7 +12,8 @@ namespace Socksnet
         {
             Open,
             Download,
-            SaveToDisk
+            SaveToDisk,
+            Html //used for debugging
         };
 
         public string MarginLeft = "0.75in";
@@ -26,6 +27,8 @@ namespace Socksnet
         public decimal PageHeight = 11m;
 
         public bool EnableSocksJsAndCss = true;
+
+        public bool EnableLongRunningJavascript = false;
 
         public string MasterPage;
 

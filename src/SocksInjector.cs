@@ -19,11 +19,15 @@ namespace Socksnet
 
 
         public string render(string html, PdfSettings settings)
-        {            
+        {
             html = IncludeSockStyles(html, settings);
+            if (settings.Action == PdfSettings.PdfAction.Html)
+            {
+                html = IncludeSockScreenStyles(html);
+            }
             html = IncludeSockJavascript(html, settings);
-            html = html.Replace("{{page}}", @"<span data-pdf='current_page'></span>");
-            html = html.Replace("{{pages}}", @"<span data-pdf='total_page'></span>");
+            html = html.Replace("{{page}}", @"<span class='socks__current_page'></span>");
+            html = html.Replace("{{pages}}", @"<span class='socks__total_pages'></span>");
             return html;
         }
 

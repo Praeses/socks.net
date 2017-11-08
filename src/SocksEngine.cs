@@ -49,6 +49,17 @@ namespace Socksnet
             if (settings == null) settings = new PdfSettings();
             var html = await this.RenderViewToString(model, settings);
             html = InjectSocks(html, settings);
+
+            if (settings.Action == PdfSettings.PdfAction.Html)
+            {
+                MemoryStream stream = new MemoryStream();
+                StreamWriter writer = new StreamWriter(stream);
+                writer.Write(html);
+                writer.Flush();
+                stream.Position = 0;
+                return controller.File(stream, @"text/html");
+            }
+
             Stream pdf = this.toPdf(html, settings);
             if (settings.Action == PdfSettings.PdfAction.Download)
             {
@@ -136,13 +147,14 @@ namespace Socksnet
         private List<string> BuildArgs(string source, string desc, PdfSettings settings)
         {
             var args = new List<string>();
-            //NOTE: header and footers cannot be suppered using header-html 
-            // until wkhtmltopdf is patched  :(
-            //if( has_header) args.Add("--header-html " + header);
-            //if (has_footer) args.Add("--footer-html " + footer);
+
             args.Add("--page-height " + settings.PageHeight + "in");
             args.Add("--page-width " + settings.PageWidth + "in");
-            //if (settings.PageSize != null) args.Add("--page-size " + settings.PageSize);
+            args.Add("--window-status socks_complete");
+
+            if (settings.EnableLongRunningJavascript)
+                args.Add("--no-stop-slow-scripts");
+
             if (settings.EnableSocksJsAndCss)
             {
                 args.Add("--margin-left 0");

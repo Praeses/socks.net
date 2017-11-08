@@ -29,6 +29,7 @@
       this.add = __bind(this.add, this);
 
       this.tableOverflow = __bind(this.tableOverflow, this);
+      this.tableBodyOverflow = __bind(this.tableBodyOverflow, this);
 
       this.heightOfChildren = __bind(this.heightOfChildren, this);
 
@@ -74,6 +75,7 @@
       return height;
     };
 
+    //page the table row by row
     Page.prototype.tableOverflow = function(table) {
       var new_table, tr, trs;
       new_table = $(table).clone();
@@ -89,10 +91,30 @@
       return table;
     };
 
-    Page.prototype.add = function(elm) {
+    //page the table tbody by tbody
+    Page.prototype.tableBodyOverflow = function (table) {
+        var new_table, tr, tbodies;
+        new_table = $(table).clone();
+        $('tbody', new_table).remove();
+        $(table).replaceWith(new_table);
+        tbodies = $('tbody', table).toArray();
+        while (this.heightOfChildren() < this.max) {
+            tr = tbodies.shift();
+            $(new_table).append(tr);
+        }
+        tr = $('tbody', new_table).last();
+        $(table).prepend(tr);
+        return table;
+    };
+
+    Page.prototype.add = function (elm) {
+      if (elm.tagName === "PAGEBREAK") { return [null]; }
       this.el.append(elm);
       if (this.heightOfChildren() > this.max && elm.tagName === "TABLE") {
-        return [this.tableOverflow(elm)];
+        if ( $('tbody', elm).length > 1 )
+          return [this.tableBodyOverflow(elm)];
+        else
+          return [this.tableOverflow(elm)];
       }
       if (this.first_elm) {
         this.first_elm = false;
@@ -134,12 +156,16 @@
     el = to_add.pop();
     overflow = page.add(el);
     if (overflow.length) {
+      //remove nulls and empties
+      overflow = overflow.filter(function (x) { return !!x }) 
       for (_j = 0, _len1 = overflow.length; _j < _len1; _j++) {
         over = overflow[_j];
         to_add.push(over);
       }
-      page = new Page();
-      pages.push(page);
+      if (to_add.length) {
+          page = new Page();
+          pages.push(page);
+      }
     }
   }
 
@@ -147,9 +173,11 @@
 
   for (_k = 0, _len2 = pages.length; _k < _len2; _k++) {
     page = pages[_k];
-    $("footer [data-pdf=\"current_page\"]", page.el).text(index);
-    $("footer [data-pdf=\"total_page\"]", page.el).text(pages.length);
+    $(".socks__current_page", page.el).text(index);
+    $(".socks__total_pages", page.el).text(pages.length);
     index++;
   }
+
+  window.status = "socks_complete";
 
 }).call(this);
