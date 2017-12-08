@@ -12,7 +12,6 @@ namespace Socksnet
         {
             Open,
             Download,
-            SaveToDisk,
             Html //used for debugging
         };
 

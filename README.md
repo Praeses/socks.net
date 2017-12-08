@@ -22,22 +22,14 @@ In your controller change View() to this.Pdf()
 
 Example Action - Single View
 ```Csharp
-  public ActionResult Index()
+  public SocksResult<ViewModel> Index()
   {
-      return this.Pdf("Index");
+    var vm = new ViewModel();
+    return new SocksResult<ViewModel>(vm, new PdfSettings() { });
   }
 ```
 
-Example Action - Stitch Multiple views 
-```Csharp
-  public ActionResult About()
-  {
-      var report1 = new PdfView {View = "About"};
-      var report2 = new PdfView {View = "About"};
 
-      return this.Pdf(report1, report2);
-  }
-```
 Limitations: 
 * When using multiple views paging tokens do not work as expected.  Paging tokens will work within each rendered view, but not in the final pdf as a whole.
 * Because you are stitching multiple view pdfs together, html mode does not work. 

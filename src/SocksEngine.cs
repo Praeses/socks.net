@@ -28,24 +28,18 @@ namespace Socksnet
         private ActionContext _actionContext;
 
 
-        public SocksEngine(ICompositeViewEngine compositeViewEngine, ITempDataProvider tempDataProvider, IHostingEnvironment hostingEnvironment) {
-            this._compositeViewEngine = compositeViewEngine;
-            this._tempDataProvider = tempDataProvider;
-            PathHelper.Instance.HostingEnvironment = hostingEnvironment;
+        public SocksEngine(ActionContext actionContext) {
+            _actionContext = actionContext;
+            var provider = actionContext.HttpContext.RequestServices;
+            _compositeViewEngine = provider.GetService(typeof(ICompositeViewEngine)) as ICompositeViewEngine;
+            _tempDataProvider = provider.GetService(typeof(ITempDataProvider)) as ITempDataProvider;
+            PathHelper.Instance.HostingEnvironment = 
+                provider.GetService(typeof(IHostingEnvironment)) as IHostingEnvironment;
         }
 
 
-
-        public async Task<ActionResult> Pdf(Controller controller)
+        public async Task<Stream> Pdf<TModel>(TModel model, PdfSettings settings = null)
         {
-            return await Pdf<Object>(controller, null, null);
-        }
-
-        public async Task<ActionResult> Pdf<TModel>(Controller controller, TModel model, PdfSettings settings = null)
-        {
-            var actionContextAccessor = controller.HttpContext.RequestServices.GetService(typeof(IActionContextAccessor)) as IActionContextAccessor;
-            _actionContext = actionContextAccessor.ActionContext;
-
             if (settings == null) settings = new PdfSettings();
             var html = await this.RenderViewToString(model, settings);
             html = InjectSocks(html, settings);
@@ -57,17 +51,11 @@ namespace Socksnet
                 writer.Write(html);
                 writer.Flush();
                 stream.Position = 0;
-                return controller.File(stream, @"text/html");
+                return stream;
             }
 
             Stream pdf = this.toPdf(html, settings);
-            if (settings.Action == PdfSettings.PdfAction.Download)
-            {
-                var filename = settings.Filename ?? (Guid.NewGuid().ToString("N") + ".pdf");
-                controller.Response.Headers.Add("Content-Disposition", "attachment; filename=" + filename);
-            }
-
-            return controller.File(pdf, @"application/pdf");
+            return pdf;
         }
 
 

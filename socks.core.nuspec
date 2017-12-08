@@ -2,7 +2,7 @@
 <package>
   <metadata>
     <id>Socks.Core</id>
-    <version>1.2.02</version>
+    <version>1.2.04</version>
     <authors>Lex Childs</authors>
     <owners>Lex Childs</owners>
     <licenseUrl>https://github.com/Praeses/socks.net/blob/master/LICENSE</licenseUrl>
