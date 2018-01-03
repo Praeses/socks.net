@@ -14,7 +14,11 @@ namespace Socksnet
         private readonly string temp_path = null;
 
         private PathHelper() {
-            temp_path = Path.GetTempPath();
+            temp_path = Path.GetTempFileName();
+            if (File.Exists(temp_path))
+                File.Delete(temp_path);
+            temp_path += Path.DirectorySeparatorChar;
+            Directory.CreateDirectory(temp_path);
             this.ExtractAssets();
         }
 
